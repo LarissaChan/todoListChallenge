@@ -5,11 +5,8 @@ import { computed, inject, ref } from "vue";
 import type { AdicionarItemRequest } from "../models/AdicionarItemRequest";
 import type { AlterarItemRequest } from "../models/AlterarItemRequest";
 type Loadings = {
-  obterListaCompleta: boolean,
   obterTarefaPorId: boolean,
   adicionarItem: boolean,
-  alterarItem: boolean,
-  excluirTarefa: boolean,
 }
 
 export const useTarefaStore = defineStore('listaDeTarefas', () => {
@@ -17,37 +14,27 @@ export const useTarefaStore = defineStore('listaDeTarefas', () => {
 
   /* State */
   const loadings = ref<Loadings>({
-    obterListaCompleta: true,
     obterTarefaPorId: false,
     adicionarItem: false,
-    alterarItem: false,
-    excluirTarefa: false,
   });
   const tarefas = ref<ItemObtidoResponse[]>([]);
   const itemTarefa = ref<ItemObtidoResponse | null>(null);
 
   /* Getters */
-/*   const tarefasAtivas = computed(() => tarefas.value
-    .filter((tarefa: ItemObtidoResponse) => tarefa.estaCompleto)); */
+   const tarefasAtivas = computed(() => tarefas.value
+    .filter((tarefa: ItemObtidoResponse) => tarefa.estaCompleto));
 
   const tarefaCompleta = computed(() =>
-  tarefas.value.filter((tarefa) => tarefa.estaCompleto === true)
+  tarefas.value.filter(Boolean)
   );
-  const tarefaImcompleta = computed(() =>
-  tarefas.value.filter((tarefa) => tarefa.estaCompleto !== true)
+  
+  const tarefaIncompleta = computed(() =>
+  tarefas.value.filter((tarefa) => !tarefa.estaCompleto)
   );
 
   /* Actions */
   async function obterListaCompleta(): Promise<void> {
-    if (!loadings.value.obterListaCompleta) {
-        try {
-            loadings.value.obterListaCompleta = true;
-            tarefas.value = await baseApiClient.obterListaCompleta();
-            console.log("teste store", tarefas.value)
-        } finally {
-            loadings.value.obterListaCompleta = false;
-        }
-    }
+    tarefas.value = await baseApiClient.obterListaCompleta();
   };
   
   async function obterTarefaPorId(id: number): Promise<void> {
@@ -60,10 +47,6 @@ export const useTarefaStore = defineStore('listaDeTarefas', () => {
         }
       }
     };
-
-/*   async function adicionarItem(tarefa: AdicionarItemRequest): Promise<void> {
-    await baseApiClient.adicionarItem(tarefa);
-      }; */
       
   async function adicionarItem(tarefa: AdicionarItemRequest): Promise<void> {
     if (!loadings.value.adicionarItem) {
@@ -78,39 +61,23 @@ export const useTarefaStore = defineStore('listaDeTarefas', () => {
   }
   
   async function alterarItem(tarefa: ItemObtidoResponse): Promise<void> {
-    if (!loadings.value.alterarItem) {
-      try {
-        loadings.value.alterarItem = true;
-        const tarefaModificada: AlterarItemRequest = {
-          id: tarefa.id,
-          nome: tarefa.nome,
-          estaCompleto: tarefa.estaCompleto
-        };
-        await baseApiClient.alterarItem(tarefaModificada);
-        await obterListaCompleta();
-      } finally {
-        loadings.value.alterarItem = false;
-      }
-    }
+    const tarefaModificada: AlterarItemRequest = {
+      id: tarefa.id,
+      nome: tarefa.nome,
+      estaCompleto: tarefa.estaCompleto
+    };
+    await baseApiClient.alterarItem(tarefaModificada);
+    await obterListaCompleta();
   }
   
   async function excluirTarefa(id: number): Promise<void> {
-    tarefas.value = tarefas.value.filter((tarefa) => tarefa.id !== id);
     await baseApiClient.excluirTarefa(id);
-/*     if (!loadings.value.excluirTarefa) {
-      try {
-        loadings.value.excluirTarefa = true;
-        await baseApiClient.excluirTarefa(id);
-        tarefas.value = tarefas.value.filter(tarefa => tarefa.id !== id);
-      } finally {
-        loadings.value.excluirTarefa = false;
-      }
-    } */
   };    
 
   return {
     tarefaCompleta,
-    tarefaImcompleta,
+    tarefaIncompleta,
+    tarefas,
     loadings,
     tarefasAtivas,
     obterListaCompleta,

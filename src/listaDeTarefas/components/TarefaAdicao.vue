@@ -1,73 +1,109 @@
 (<template>
-  <v-container>
-    <v-row>
-      <v-col cols="5">
-      <v-row>
-        <label>Descrição:&nbsp;</label>
-        <v-textarea
-          placeholder="Insira sua tarefa"
-          variant="outlined"
-          rows="1"
-          row-height="15"
-          v-model="tarefaItem"
-        ></v-textarea>
+  <div class="tarefa-adicao__header">
+    <label class="mr-3">Descrição:</label>
+    <template v-if="estaEditando">
+      <v-textarea
+        v-model="tarefaParaEditar.nome"
+        class="tarefa-adicao__input"
+        placeholder="Editando tarefa"
+        variant="outlined"
+        rows="1"
+        row-height="15"
+      />
+      <div style="display:grid">
         <v-btn
           variant="outlined"
           rounded="lg"
           size="small"
-          @click="adicionarItem"
-          > Cadastrar
+          @click="atualizarItem"
+        >
+          Salvar
         </v-btn>
-      </v-row>
-    </v-col>
-    </v-row> 
-    <v-table>
-      <thead>
-        <tr>
-          <th scope="col">#</th>
-          <th scope="col">Tarefa</th>
-          <th scope="col">Ações</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="(tarefa, index) in tarefaStore.tarefaImcompleta" :key="index">
-          <td>
-            <input type="checkbox" name="checkbox" />
-          </td>
-          <td>
-            <span>{{ tarefa.nome }}</span>
-          </td>
-          <td>
-            <v-row class="btn-group">
-              <v-col>
-                <v-btn
-                  variant="outlined"
-                  rounded="lg"
-                  size="small"
-                  v-on:click="alterarItem(tarefa)"
-                >
-                  Editar</v-btn
-                >
-                <v-btn
-                  variant="outlined"
-                  rounded="lg"
-                  size="small"
-                  v-on:click="excluirTarefa(index)"
-                >
-                  Excluir</v-btn
-                >
-                <v-btn variant="outlined" rounded="lg" size="small"> Finalizar</v-btn>
-              </v-col>
-            </v-row>
-          </td>
-        </tr>
-      </tbody>
-    </v-table>
-  </v-container>
+        <v-btn
+          rounded="lg"
+          size="small"
+          @click="limparEdicao"
+        >
+          Cancelar
+        </v-btn>
+      </div>
+    </template>
+    <template v-else>
+      <v-textarea
+        v-model="tarefaItem"
+        class="tarefa-adicao__input"
+        placeholder="Insira sua tarefa"
+        variant="outlined"
+        rows="1"
+        row-height="15"
+      />
+      <v-btn
+        variant="outlined"
+        rounded="lg"
+        size="small"
+        @click="adicionarItem"
+      >
+        Cadastrar
+      </v-btn>
+    </template>
+
+  </div>
+
+  <v-table>
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Tarefa</th>
+        <th scope="col">Ações</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr
+        v-for="(tarefa, index) in listaFiltradaSemItemEmEdicao"
+        :key="index"
+      >
+        <td>
+          <input type="checkbox" name="checkbox" />
+        </td>
+        <td>
+          <span>{{ tarefa.nome }}</span>
+        </td>
+        <td>
+          <v-row class="btn-group">
+            <v-col>
+              <v-btn
+                variant="outlined"
+                rounded="lg"
+                size="small"
+                v-on:click="alterarItem(tarefa.id)"
+              >
+                Editar
+              </v-btn>
+              <v-btn
+                variant="outlined"
+                rounded="lg"
+                size="small"
+                @click="excluirTarefa(tarefa.id)"
+              >
+                Excluir
+              </v-btn>
+              <v-btn
+                variant="outlined"
+                rounded="lg"
+                size="small"
+              >
+                Finalizar
+              </v-btn>
+            </v-col>
+          </v-row>
+        </td>
+      </tr>
+    </tbody>
+  </v-table>
 </template>
 
 <script lang="ts">
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useTarefaStore } from '../store/ListaDeTarefaStore'
 import type { ItemObtidoResponse } from '../models/ItemObtidoResponse'
 import type { AdicionarItemRequest } from '../models/AdicionarItemRequest'
@@ -77,10 +113,22 @@ export default {
     const tarefaStore = useTarefaStore()
 
     const tarefaItem = ref("")
+    const tarefaParaEditar = ref({
+      id: null,
+      nome: null,
+      estaCompleto: null,
+    })
+    const estaEditando = ref(false)
     const tarefaObtida = ref<ItemObtidoResponse>()
     const loadings = tarefaStore.loadings
 
-     async function adicionarItem(): Promise<void> {
+    // Computed
+    const listaFiltradaSemItemEmEdicao = computed(() => {
+      return tarefaStore.tarefaIncompleta.filter(({ id }) => id !== tarefaParaEditar.value.id)
+    })
+
+    // Methods
+    async function adicionarItem(): Promise<void> {
       const tarefaRequest: AdicionarItemRequest = {
         nome: tarefaItem.value,
       };
@@ -88,14 +136,34 @@ export default {
       await tarefaStore.obterListaCompleta()
       tarefaItem.value= ''
     }
-
-    function excluirTarefa(index: number) {
-      const tarefaExcluida = tarefaStore.tarefasAtivas[index]
-      tarefaStore.excluirTarefa(tarefaExcluida.id)
+    async function excluirTarefa(id: number) {
+      Promise
+        .resolve(tarefaStore.excluirTarefa(id))
+        .then(async () => await tarefaStore.obterListaCompleta())
     }
+    function alterarItem(id: number) {
+      const [item] = tarefaStore
+        .tarefaIncompleta
+        .filter((tarefa) => tarefa.id === id)
 
-    function alterarItem(tarefa: any) {
-      tarefaStore.alterarItem(tarefa)
+      Object.assign(tarefaParaEditar.value, item)
+      estaEditando.value = true
+    }
+    async function atualizarItem() {
+      Promise
+        .resolve(tarefaStore.alterarItem(tarefaParaEditar.value))
+        .then(async () => await tarefaStore.obterListaCompleta())
+        .finally(() => {
+          estaEditando.value = false
+        })
+    }
+    async function limparEdicao() {
+      Object
+        .keys(tarefaParaEditar.value)
+        .forEach((key) => {
+          tarefaParaEditar.value[key] = null
+        })
+      estaEditando.value = false
     }
 
     onMounted(async () => {
@@ -110,8 +178,31 @@ export default {
       adicionarItem,
       excluirTarefa,
       alterarItem,
+      estaEditando,
+      tarefaParaEditar,
+      atualizarItem,
+      limparEdicao,
+      listaFiltradaSemItemEmEdicao,
     }
   },
 }
 </script>
-)
+
+<style scoped>
+.tarefa-adicao__header {
+  display: flex;
+}
+
+.tarefa-adicao__input {
+  margin: 0 10px;
+
+  max-width: 35vw;
+  min-width: 20px;
+}
+
+/* .tarefa-adicao {
+  &__header {
+    display: flex;
+  }
+} */
+</style>)

@@ -13,7 +13,6 @@ export class ListaDeTarefaApiClient implements IListaDeTarefaApiClient {
 
   public async obterListaCompleta(): Promise<ItemObtidoResponse[]> {
     const response = await this.baseApiClient.get<ItemObtidoResponse[]>("/api/TodoItems");
-    console.log("lista completa", response);
     return response;
   }
 
