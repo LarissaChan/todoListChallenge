@@ -1,70 +1,46 @@
-# Teste de Desenvolvimento - Frontend e Backend
+# ToDoListChallenge
 
-Olá! Bom dia, boa tarde ou boa noite!
+This template should help get you started developing with Vue 3 in Vite.
 
-Este é um desafio criado para a nossa seleção de uma pessoa Engenheira de Software que irá atuar na role de DEV.
+## Recommended IDE Setup
 
-Leia atentamente todo o conteúdo desse documento antes de começar qualquer execução!
+[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
 
-## Instruções gerais
+## Type Support for `.vue` Imports in TS
 
-O desafio consiste em implementar um app de TODO List simples que possua um frontend e um backend para processar e armazenar as operações e dados.
+TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
 
-Não definiremos linguagens ou frameworks a serem utilizados, no entanto, o uso de frameworks como Angular, Vue.js e React além de linguagens como Java e C# podem ser um diferencial para avaliar o conhecimento nessas stacks. Fica a seu critério escolher o que se adequa mais ao seu perfil e/ou ao seu conhecimento.
+If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
 
-A entrega desse teste deve ser feita através do seu repositório Git pessoal (GitHub, Bitbucket, etc).
+1. Disable the built-in TypeScript Extension
+    1) Run `Extensions: Show Built-in Extensions` from VSCode's command palette
+    2) Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
+2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
 
-Qualquer dúvida que tenha, basta entrar em contato conosco que teremos o maior prazer em te ajudar!
+## Customize configuration
 
-### Critérios para avaliação
-- Organização de código, arquitetura e boas práticas de programação (SOLID, Clean Code, etc)
-- Como foi a utilização dos frameworks e bibliotecas utilizados e da linguagem de programação
-- Comunicação entre as aplicações (frontend e backend) deverá ocorrer através do protocolo HTTP com chamadas Rest utilizando o formato JSON
-- Documentação de como executar os projetos no ambiente local
-- Implementação de testes de unidade (diferencial)
-- Aplicações executando em containers Docker / docker-compose (diferencial)
+See [Vite Configuration Reference](https://vitejs.dev/config/).
 
-# Construindo um app de todo-list
+## Project Setup
 
-## Meu Todo List App
+```sh
+npm install
+```
 
-### Frontend
+### Compile and Hot-Reload for Development
 
-- Faça o setup de um novo projeto
-- Criar uma página com formulário para inclusão da lista de TODOs. A página deverá conter:
-  - Campo de input para inserir a descrição
-  - Botão para cadastrar
-- Na mesma página, crie uma tabela para visualizar os itens já cadastrados. A tabela deverá possuir as seguintes ações para cada item:
-  - Botão para editar o texto
-  - Botão para excluir o item
-  - Botão para finalizar o item
-- Os itens finalizados deverão ser apresentados em uma cor diferente dos demais itens na lista
-- Criar uma opção para selecionar todos os itens da lista e um botão para finalizar todos com uma única ação
+```sh
+npm run serv
+```
 
-Abaixo pode ser visto um wireframe de como essa tela pode ser construída:
+### Type-Check, Compile and Minify for Production
 
-![Wireframe TODO List App](./images/wireframe-todolist-app.png)
+```sh
+npm run build
+```
 
-### Backend
+### Lint with [ESLint](https://eslint.org/)
 
-- Faça o setup de um novo projeto
-- Criar APIs Rest para as seguintes operações:
-  - Listar os itens salvos
-  - Salvar / Atualizar um item
-    - Poderá ser utilizado também para mudar o status do item para finalizado
-  - Excluir um item
-  
-
-**Obs.:** A persistência das informações pode ser em memória ou em um banco de dados, fica a seu critério definir o que é mais confortável para implementar.
-
-## Bônus Frontend
-
-Como bônus, caso queira exercitar ainda mais os recursos do framework escolhido, implemente também a busca por itens já finalizados e a ordenação na tabela para a coluna "Tarefa".
-
-## Considerações finais
-
-Aqui, finalizamos o teste! Espero que tenha conseguido fazer tudo com bastante carinho e atenção! Aguardamos pelo seu envio e, assim que fizermos a avaliação, iremos te dar um retorno com feedbacks a respeito.
-
-Esperamos também que tenha gostado e que tenha aprendido um pouco conosco!
-
-Até breve!
+```sh
+npm run lint
+```
