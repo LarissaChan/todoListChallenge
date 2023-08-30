@@ -26,8 +26,8 @@ export class ListaDeTarefaApiClient implements IListaDeTarefaApiClient {
     return response;
   }
 
-  public async alterarItem(tarefa: AlterarItemRequest): Promise<any> {
-    const response = await this.baseApiClient.put("/api/TodoItems", tarefa);
+  public async alterarItem(id: number, modificacoes: AlterarItemRequest): Promise<any> {
+    const response = await this.baseApiClient.put(`/api/TodoItems/${id}`, modificacoes);
     return response;
   }
 

@@ -6,6 +6,6 @@ export interface IListaDeTarefaApiClient {
   adicionarItem(tarefa: AdicionarItemRequest): Promise<any>;
   obterListaCompleta(): Promise<ItemObtidoResponse[]>;
   obterTarefaPorId(id: number): Promise<ItemObtidoResponse>;
-  alterarItem(tarefa: AlterarItemRequest): Promise<any>;
+  alterarItem(id: number, modificacoes: AlterarItemRequest): Promise<any>;
   excluirTarefa(id: number): Promise<any>;
 }

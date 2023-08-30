@@ -4,13 +4,13 @@
 :root {
   /* Cores Primárias */
   --color-primary: #e9ebee;
-  --color-primary-dark: #000000b3;
+  --color-primary-dark: #2f54d3;
   --color-primary-light: #ffffffe6;
 
   /* Cores Secundárias */
-  --color-secondary: #000000b3;
-  --color-secondary-light: #000000b3;
-  --color-secondary-dark: #000000b3;
+  --color-secondary: #2f54d3;
+  --color-secondary-light: #2f54d3;
+  --color-secondary-dark: #2f54d3;
   --main-text-color: #000000b3;
   --color-blue: #2f54d3;
   --dp-primary-color: #2f54d3;
@@ -19,9 +19,6 @@
 body {
   font-family: Roboto, Arial, sans-serif;
   color: var(--main-text-color);
-}
-.dp__theme_light {
-  --dp-primary-color: #2f54d3;
 }
 
 p {
@@ -46,30 +43,3 @@ p {
   white-space: normal;
 }
 
-.font-color {
-  color: var(--color-primary-dark);
-}
-
-.font-color-subtitle {
-  color: var(--color-secondary);
-}
-
-.font-menu {
-  color: var(--color-primary-light);
-}
-
-.checkbox-color {
-  color: var(--color-secondary);
-}
-
-/* Componentes Vuetify */
-.v-text-field .v-input-control .v-input-slot {
-  min-height: 36px;
-  display: flex;
-  align-items: center;
-}
-
-.v-tooltip-content {
-  opacity: 1;
-  background-color: #333;
-}
